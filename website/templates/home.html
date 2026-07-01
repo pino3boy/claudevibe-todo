@@ -1,2 +1,114 @@
-<h1>Welcome to my calendar</h1>
-<p>Daily planner - Aaron Alvarado</p>
+{% extends 'base.html' %}
+
+{% block title %}Home | Daily Planner{% endblock %}
+
+{% block container_max_width %}860px{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+
+        <h1 class="card-title text-uppercase fw-bold border-bottom border-danger pb-2 mb-3 text-center" style="font-size: 1.25rem;">
+            Welcome to My Calendar
+        </h1>
+        <p class="text-muted fst-italic mb-4 text-center">Let's get to work.</p>
+
+        <!-- Month navigation -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <a href="?year={{ prev_year }}&month={{ prev_month }}"
+               class="btn btn-sm btn-outline-secondary">
+                <i class="bi bi-chevron-left"></i> Prev
+            </a>
+            <h2 class="fw-bold mb-0" style="font-size: 1.1rem;">
+                {{ month_name }} {{ year }}
+            </h2>
+            <a href="?year={{ next_year }}&month={{ next_month }}"
+               class="btn btn-sm btn-outline-secondary">
+                Next <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+
+        <!-- Calendar table -->
+        <div class="table-responsive">
+            <table class="table table-bordered text-center mb-0" id="calendar-table">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th class="text-danger-emphasis">Sat</th>
+                        <th class="text-danger-emphasis">Sun</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for week in cal_weeks %}
+                    <tr>
+                        {% for day in week %}
+                        <td class="p-0
+                            {% if day == today.day and month == today.month and year == today.year %}cal-today{% endif %}">
+                            {% if day != 0 %}
+                                <a href="{% url 'day' year month day %}"
+                                   class="d-flex flex-column align-items-center justify-content-start cal-day
+                                          {% if day in task_dates %}cal-has-tasks{% endif %}">
+                                    <span class="cal-day-num">{{ day }}</span>
+                                    {% if day in task_dates %}
+                                        <span class="cal-dot"></span>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    #calendar-table td {
+        height: 80px;
+        vertical-align: top;
+    }
+    .cal-today {
+        background-color: #fff3f3;
+    }
+    a.cal-day {
+        height: 100%;
+        min-height: 80px;
+        padding: 6px 4px;
+        text-decoration: none;
+        color: #212529;
+        transition: background-color 0.15s;
+    }
+    a.cal-day:hover {
+        background-color: #f8d7da;
+        color: #000;
+    }
+    .cal-day-num {
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    .cal-today .cal-day-num {
+        background-color: #F40009;
+        color: #fff;
+        border-radius: 50%;
+        width: 26px;
+        height: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cal-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #F40009;
+        margin-top: 4px;
+    }
+</style>
+{% endblock %}
