@@ -2,12 +2,13 @@ import calendar
 from datetime import date
 
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 from .models import Task
+from .forms import UserUpdateForm
 
 
 def _add_bootstrap_classes(form):
@@ -41,6 +42,14 @@ def home(request):
         .values_list('date__day', flat=True)
     )
 
+    # Days in this month with a past, incomplete task (general or scheduled)
+    overdue_dates = set(
+        Task.objects.filter(
+            user=request.user, date__year=year, date__month=month,
+            date__lt=today, completed=False,
+        ).values_list('date__day', flat=True)
+    )
+
     return render(request, 'home.html', {
         'cal_weeks': cal_weeks,
         'month_name': month_name,
@@ -52,6 +61,7 @@ def home(request):
         'next_year': next_year,
         'next_month': next_month,
         'task_dates': task_dates,
+        'overdue_dates': overdue_dates,
     })
 
 
@@ -91,6 +101,8 @@ def day_view(request, year, month, day):
                 else:
                     Task.objects.filter(user=request.user, date=target_date, hour=h).delete()
 
+            messages.success(request, 'Saved')
+
         return redirect('day', year=year, month=month, day=day)
 
     general_tasks = Task.objects.filter(user=request.user, date=target_date, hour__isnull=True)
@@ -98,10 +110,12 @@ def day_view(request, year, month, day):
         t.hour: (t.text, t.completed)
         for t in Task.objects.filter(user=request.user, date=target_date, hour__isnull=False)
     }
-    schedule = [
-        (h, _format_hour(h), hourly_map.get(h, ('', False))[0], hourly_map.get(h, ('', False))[1])
-        for h in SCHEDULE_HOURS
-    ]
+    is_past_day = target_date < date.today()
+    schedule = []
+    for h in SCHEDULE_HOURS:
+        text, completed = hourly_map.get(h, ('', False))
+        overdue = is_past_day and bool(text) and not completed
+        schedule.append((h, _format_hour(h), text, completed, overdue))
 
     return render(request, 'day.html', {
         'target_date': target_date,
@@ -120,6 +134,42 @@ def delete_task(request, task_id):
     if request.method == 'POST':
         task.delete()
     return redirect('day', year=year, month=month, day=day)
+
+
+@login_required
+def profile(request):
+    if request.method == 'POST':
+        form_type = request.POST.get('form_type')
+
+        if form_type == 'update_info':
+            info_form = UserUpdateForm(request.POST, instance=request.user)
+            pwd_form = PasswordChangeForm(request.user)
+            if info_form.is_valid():
+                info_form.save()
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('profile')
+
+        elif form_type == 'change_password':
+            info_form = UserUpdateForm(instance=request.user)
+            pwd_form = PasswordChangeForm(request.user, request.POST)
+            if pwd_form.is_valid():
+                user = pwd_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password changed successfully.')
+                return redirect('profile')
+
+        else:
+            info_form = UserUpdateForm(instance=request.user)
+            pwd_form = PasswordChangeForm(request.user)
+
+    else:
+        info_form = UserUpdateForm(instance=request.user)
+        pwd_form = PasswordChangeForm(request.user)
+
+    return render(request, 'profile.html', {
+        'info_form': _add_bootstrap_classes(info_form),
+        'pwd_form': _add_bootstrap_classes(pwd_form),
+    })
 
 
 def register_user(request):

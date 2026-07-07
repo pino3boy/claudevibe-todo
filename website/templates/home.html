@@ -2,14 +2,14 @@
 
 {% block title %}Home | Daily Planner{% endblock %}
 
-{% block container_max_width %}860px{% endblock %}
+{% block container_size %}container-lg{% endblock %}
 
 {% block content %}
-<div class="card shadow-sm">
+<div class="card shadow-sm" id="calendar-card">
     <div class="card-body p-4">
 
-        <h1 class="card-title text-uppercase fw-bold border-bottom border-danger pb-2 mb-3 text-center" style="font-size: 1.25rem;">
-            Welcome to My Calendar
+        <h1 class="card-title text-uppercase fw-bold border-bottom border-danger pb-2 mb-3 text-center title-page">
+            Welcome back, {{ user.username }}!
         </h1>
         <p class="text-muted fst-italic mb-4 text-center">Let's get to work.</p>
 
@@ -19,7 +19,7 @@
                class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-chevron-left"></i> Prev
             </a>
-            <h2 class="fw-bold mb-0" style="font-size: 1.1rem;">
+            <h2 class="fw-bold mb-0 title-section-lg">
                 {{ month_name }} {{ year }}
             </h2>
             <a href="?year={{ next_year }}&month={{ next_month }}"
@@ -47,7 +47,8 @@
                     <tr>
                         {% for day in week %}
                         <td class="p-0
-                            {% if day == today.day and month == today.month and year == today.year %}cal-today{% endif %}">
+                            {% if day == today.day and month == today.month and year == today.year %}cal-today{% endif %}
+                            {% if day in overdue_dates %}cal-overdue{% endif %}">
                             {% if day != 0 %}
                                 <a href="{% url 'day' year month day %}"
                                    class="d-flex flex-column align-items-center justify-content-start cal-day
@@ -68,47 +69,4 @@
 
     </div>
 </div>
-
-<style>
-    #calendar-table td {
-        height: 80px;
-        vertical-align: top;
-    }
-    .cal-today {
-        background-color: #fff3f3;
-    }
-    a.cal-day {
-        height: 100%;
-        min-height: 80px;
-        padding: 6px 4px;
-        text-decoration: none;
-        color: #212529;
-        transition: background-color 0.15s;
-    }
-    a.cal-day:hover {
-        background-color: #f8d7da;
-        color: #000;
-    }
-    .cal-day-num {
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-    .cal-today .cal-day-num {
-        background-color: #F40009;
-        color: #fff;
-        border-radius: 50%;
-        width: 26px;
-        height: 26px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .cal-dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background-color: #F40009;
-        margin-top: 4px;
-    }
-</style>
 {% endblock %}

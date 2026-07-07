@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}My Profile | Daily Planner{% endblock %}
+
+{% block content %}
+
+<!-- Account information -->
+<div class="card shadow-sm mb-4">
+    <div class="card-body p-4">
+        <h2 class="fw-bold text-uppercase border-bottom border-danger pb-2 mb-4 title-section-lg">
+            <i class="bi bi-person me-2 text-danger"></i>Account Information
+        </h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="update_info">
+
+            {% for field in info_form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-floppy me-1"></i>Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Change password -->
+<div class="card shadow-sm">
+    <div class="card-body p-4">
+        <h2 class="fw-bold text-uppercase border-bottom border-danger pb-2 mb-4 title-section-lg">
+            <i class="bi bi-lock me-2 text-danger"></i>Change Password
+        </h2>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="change_password">
+
+            {% for field in pwd_form %}
+            <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label fw-semibold small text-secondary">
+                    {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+                {% if field.help_text %}
+                    <div class="form-text">{{ field.help_text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="text-end">
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-shield-lock me-1"></i>Update Password
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

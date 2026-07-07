@@ -2,13 +2,13 @@
 
 {% block title %}{{ target_date|date:"F j, Y" }} | Daily Planner{% endblock %}
 
-{% block container_max_width %}700px{% endblock %}
+{% block container_size %}container-md{% endblock %}
 
 {% block content %}
 
 <!-- Page header -->
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h1 class="fw-bold text-uppercase mb-0" style="font-size: 1.25rem;">
+    <h1 class="fw-bold text-uppercase mb-0 title-page">
         <i class="bi bi-calendar-day me-2 text-danger"></i>{{ target_date|date:"l, F j, Y" }}
     </h1>
     <a href="{% url 'home' %}?year={{ year }}&month={{ month }}"
@@ -20,7 +20,7 @@
 <!-- General tasks -->
 <div class="card shadow-sm mb-4">
     <div class="card-body p-4">
-        <h2 class="fw-bold text-uppercase border-bottom border-danger pb-2 mb-3" style="font-size: 1rem;">
+        <h2 class="fw-bold text-uppercase border-bottom border-danger pb-2 mb-3 title-section">
             <i class="bi bi-list-check me-2 text-danger"></i>Tasks
         </h2>
 
@@ -59,7 +59,7 @@
 <!-- Hourly schedule -->
 <div class="card shadow-sm">
     <div class="card-body p-4">
-        <h2 class="fw-bold text-uppercase border-bottom border-danger pb-2 mb-3" style="font-size: 1rem;">
+        <h2 class="fw-bold text-uppercase border-bottom border-danger pb-2 mb-3 title-section">
             <i class="bi bi-clock me-2 text-danger"></i>Daily Schedule
         </h2>
 
@@ -68,8 +68,8 @@
             <input type="hidden" name="form_type" value="save_schedule">
 
             <div class="schedule-grid">
-                {% for h, label, value, completed in schedule %}
-                <div class="schedule-row {% if completed %}is-done{% endif %}">
+                {% for h, label, value, completed, overdue in schedule %}
+                <div class="schedule-row {% if completed %}is-done{% endif %} {% if overdue %}is-overdue{% endif %}">
                     <input type="checkbox"
                            name="done_{{ h }}"
                            class="schedule-check"
@@ -93,65 +93,5 @@
         </form>
     </div>
 </div>
-
-<style>
-    .schedule-grid {
-        display: flex;
-        flex-direction: column;
-    }
-    .schedule-row {
-        display: grid;
-        grid-template-columns: 28px 90px 1fr;
-        align-items: center;
-        gap: 10px;
-        padding: 7px 0;
-        border-bottom: 1px solid #f0f0f0;
-    }
-    .schedule-row:last-child {
-        border-bottom: none;
-    }
-    .schedule-check {
-        width: 17px;
-        height: 17px;
-        accent-color: #F40009;
-        cursor: pointer;
-        flex-shrink: 0;
-    }
-    .schedule-label {
-        text-align: right;
-        white-space: nowrap;
-        color: #888B8D;
-    }
-    .schedule-input {
-        border: none;
-        border-bottom: 1px solid #dee2e6;
-        border-radius: 0;
-        background: transparent;
-        padding-left: 4px;
-    }
-    .schedule-input:focus {
-        box-shadow: none;
-        border-bottom-color: #F40009;
-        background: transparent;
-    }
-    .is-done .schedule-label {
-        color: #adb5bd;
-    }
-    .is-done .schedule-input {
-        text-decoration: line-through;
-        color: #adb5bd;
-    }
-</style>
-
-{% block extra_js %}
-<script>
-    document.querySelectorAll('.schedule-check').forEach(function(cb) {
-        cb.addEventListener('change', function() {
-            this.closest('form').submit();
-        });
-    });
-</script>
-{% endblock %}
-
 
 {% endblock %}

@@ -1,0 +1,166 @@
+/* Daily Planner - site-wide styles */
+
+/* Content container widths (overrides per page via container_size block) */
+.container-sm {
+    max-width: 600px;
+}
+.container-md {
+    max-width: 700px;
+}
+.container-lg {
+    max-width: 860px;
+}
+
+/* Heading sizes */
+.title-page {
+    font-size: 1.25rem;
+}
+.title-section {
+    font-size: 1rem;
+}
+.title-section-lg {
+    font-size: 1.1rem;
+}
+
+/* Daily schedule grid (day.html) */
+.schedule-grid {
+    display: flex;
+    flex-direction: column;
+}
+.schedule-row {
+    display: grid;
+    grid-template-columns: 28px 90px 1fr;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+.schedule-row:last-child {
+    border-bottom: none;
+}
+.schedule-check {
+    width: 17px;
+    height: 17px;
+    accent-color: #F40009;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.schedule-label {
+    text-align: right;
+    white-space: nowrap;
+    color: #888B8D;
+}
+.schedule-input {
+    border: none;
+    border-bottom: 1px solid #dee2e6;
+    border-radius: 0;
+    background: transparent;
+    padding-left: 4px;
+}
+.schedule-input:focus {
+    box-shadow: none;
+    border-bottom-color: #F40009;
+    background: transparent;
+}
+.is-done .schedule-label {
+    color: #adb5bd;
+}
+.is-done .schedule-input {
+    text-decoration: line-through;
+    color: #4b7a4f;
+    background-color: #d4edda;
+    border-bottom-color: #a3d3a9;
+}
+.is-overdue .schedule-input {
+    color: #842029;
+    background-color: #f8d7da;
+    border-bottom-color: #dc3545;
+}
+
+/* Calendar (home.html) */
+#calendar-table td {
+    height: 80px;
+    vertical-align: top;
+}
+.cal-today {
+    background-color: #fff3f3;
+}
+a.cal-day {
+    height: 100%;
+    min-height: 80px;
+    padding: 6px 4px;
+    text-decoration: none;
+    color: #212529;
+    transition: background-color 0.15s;
+}
+a.cal-day:hover {
+    background-color: #d6e9f8;
+    color: #000;
+}
+.cal-day-num {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.cal-today .cal-day-num {
+    background-color: #F40009;
+    color: #fff;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.cal-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #F40009;
+    margin-top: 4px;
+}
+.cal-overdue a.cal-day {
+    background-color: #F40009;
+    color: #fff;
+}
+.cal-overdue .cal-day-num {
+    color: #fff;
+}
+.cal-overdue .cal-dot {
+    background-color: #fff;
+}
+.cal-overdue a.cal-day:hover {
+    background-color: #c40007;
+    color: #fff;
+}
+
+/* Shrink the calendar for typical phone widths. Screens narrower than 360px
+   (e.g. very old/small devices) fall back to horizontal scroll via
+   .table-responsive instead of being squeezed further. */
+@media (min-width: 360px) and (max-width: 576px) {
+    #calendar-card .card-body {
+        padding: 1rem;
+    }
+    #calendar-table th {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.2rem;
+    }
+    #calendar-table td {
+        height: 52px;
+    }
+    a.cal-day {
+        min-height: 52px;
+        padding: 3px 2px;
+    }
+    .cal-day-num {
+        font-size: 0.75rem;
+    }
+    .cal-today .cal-day-num {
+        width: 20px;
+        height: 20px;
+    }
+    .cal-dot {
+        width: 5px;
+        height: 5px;
+        margin-top: 2px;
+    }
+}
