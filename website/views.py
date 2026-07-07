@@ -18,11 +18,18 @@ def _add_bootstrap_classes(form):
     return form
 
 
+def _int_param(value, default):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+
 @login_required
 def home(request):
     today = date.today()
-    year = int(request.GET.get('year', today.year))
-    month = int(request.GET.get('month', today.month))
+    year = _int_param(request.GET.get('year'), today.year)
+    month = _int_param(request.GET.get('month'), today.month)
 
     # Clamp to valid month range
     year = max(2000, min(year, 2100))
